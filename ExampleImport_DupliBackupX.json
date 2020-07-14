@@ -1,0 +1,69 @@
+{
+  "CreatedByVersion": "2.0.5.107",
+  "Schedule": null,
+  "Backup": {
+    "ID": "1",
+    "Name": "ExampleImport_DupliBackupX",
+    "Description": "",
+    "Tags": [],
+    "TargetURL": "file://D:\\BACKUPS\\ExampleImport_DupliBackupX",
+    "DBPath": "D:\\BACKUPS\\ExampleImport_DupliBackupX\\DupliBackupX\\ExampleImport_DupliBackupX.sqlite",
+    "Sources": [
+      "C:\\Program Files\\Duplicati 2"
+    ],
+    "Settings": [
+      {
+        "Filter": "",
+        "Name": "encryption-module",
+        "Value": "",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "compression-module",
+        "Value": "zip",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "dblock-size",
+        "Value": "20MB",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "auto-vacuum",
+        "Value": "true",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "auto-vacuum-interval",
+        "Value": "120m",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "thread-priority",
+        "Value": "low",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "log-retention",
+        "Value": "2D",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "--no-encryption",
+        "Value": "true",
+        "Argument": null
+      }
+    ],
+    "Filters": [],
+    "Metadata": {},
+    "IsTemporary": false
+  },
+  "DisplayNames": {}
+}

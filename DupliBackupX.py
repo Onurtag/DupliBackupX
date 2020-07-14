@@ -7,32 +7,35 @@ from consolemenu import *
 from consolemenu.format import *
 from consolemenu.items import *
 
-## -------- DupliBackupX --------
-## https://github.com/Onurtag/DupliBackupX
+## -------- DupliBackupX --------  
+## https://github.com/Onurtag/DupliBackupX  
 ##
-## 📑 The main purpose of DupliBackupX is to be able to quickly create and remove a portable backup set.
+## 📑 The main purpose of DupliBackupX is to be able to quickly create and remove a portable backup set.  
 ##
-## The destination folder will include everything that was used in the backup:
+## The destination folder will include everything that was used in the backup:  
 ## - Files that are backed-up
 ## - Duplicati server database, duplicati backup database
 ## - Backups that were restored using the menu
-## - Generated json file (if Backup Config is used)
-## When they are no longer needed, you can just delete the destination folder to quickly get rid of everything.
+## - Generated json file (if Backup Config is used)  
 ##
-## For configuration, you can either use the below Backup Config or just import a duplicati .json file.
-## ⭐ You can import a json file using the commandline argument --jsonfile
-##      For example > python DupliBackupX --jsonfile="D:\MyBackup.json"
+## When they are no longer needed, you can just delete the destination folder to quickly get rid of everything.  
 ##
-##  When using the Backup Config, the base file will be DupliBackupX_BASE.json. The Backup Config values will be added onto that.
+## For configuration, you can either use the below Backup Config or just import a duplicati .json file.  
+## 
+## ⭐ You can import a json file using the commandline argument --jsonfile. For example:  
+##
+##     python DupliBackupX --jsonfile="D:\MyBackup.json"  
+##
+##  When using the Backup Config, the base file will be DupliBackupX_BASE.json. The Backup Config values will be added onto that.  
 ##
 ##
-## 👟 Used applications:
-## - duplicati 2 (https://github.com/duplicati/duplicati)
-## - duplicati-client (https://github.com/Pectojin/duplicati-client)
+## 👟 Used applications:  
+## - duplicati 2 (https://github.com/duplicati/duplicati)  
+## - duplicati-client (https://github.com/Pectojin/duplicati-client)  
 ##
-## 📚 Used pip libraries:
-## - termcolor (https://pypi.org/project/termcolor/)
-## - consolemenu (consolemenu was modified to prevent it from clearing the screen: https://github.com/Onurtag/console-menu)
+## 📚 Used pip libraries:  
+## - termcolor (https://pypi.org/project/termcolor/)  
+## - consolemenu (consolemenu was modified to prevent it from clearing the screen: https://github.com/Onurtag/console-menu)  
 ##
 
 # TODO maybe add application config commandline.
@@ -42,30 +45,30 @@ from consolemenu.items import *
 ########################
 
 # ---------- 👟 Application config -------
-# Backup timer (seconds)
-backupTimer = 60
+# Backup timer (seconds). Making this too short might be unwise. 60 seconds will not be enough for larger backups.
+backuptimer = 60
 # Duplicati 2 and Duplicati_client folders. These could be empty if they are on your PATH variables
-duplicatiLocation = "C:\\Program Files\\Duplicati 2\\"
-duplicaticlientLocation = "C:\\DATA\\Portables\\duplicati_client\\"
+duplicati_location = "C:\\Program Files\\Duplicati 2\\"
+duplicaticlient_location = "C:\\DATA\\Portables\\duplicati_client\\"
 # Duplicati server port.
-servicePort = "8304"
+serviceport = "8304"
 
 # Only import json. Enter a json file path to ignore the backup config and just import the json file.
 # You can use the commandline argument --jsonfile to set this
 # Leave it empty to use the below Backup Config
 #
-# onlyImportJson = "D:\\MyBackup.json"
-onlyImportJson = ""
+# importjson = "D:\\MyBackup.json"
+importjson = ""
 
 # -------------------------------------
 
 # ----------- 📦 Backup Config -----------
-# ❗ Backup config is not used if you are using onlyImportJson (or the --jsonfile commandline)
+# ❗ Backup config is not used if you are using importjson (or the --jsonfile commandline)
 
 # Backup name and destination
-backupName = "MyBackup" + "_DupliBackupX"
-# By default backupDestination is a folder named backupName under C:\Backups
-backupDestination = "C:\\Backups\\" + backupName
+backupname = "MyBackup" + "_DupliBackupX"
+# By default backupdestination is a folder named backupname under C:\Backups
+backupdestination = "C:\\Backups\\" + backupname
 
 # The first source is opened when the "Open Source Folder" menu is selected.
 #
@@ -73,11 +76,11 @@ backupDestination = "C:\\Backups\\" + backupName
 # Because of that, backup sources can't end in backslash (\).
 #
 ## Examples:
-# backupSources = [
+# backupsources = [
 #     r"C:\Folder\SubFolder",
 #     r"C:\Folder\File.txt",
 # ]
-backupSources = [
+backupsources = [
     r"C:\Folder\SubFolder",
     r"C:\Folder\File.txt",
 ]
@@ -88,164 +91,167 @@ backupSources = [
 ########################
 ########################
 
-backupConfig = {}
+backupconfig = {}
 theInterval = None
-serverProc = None
-backupDBPath = ""
+serverproc = None
+backupdbpath = ""
 
 
 def main():
-    if onlyImportJson != "":
-        importJsonValues()
+    if importjson != "":
+        importjsonvalues()
 
-    createPrintConfig()
+    createconfig()
     print(colored("\n--------DupliBackupX--------", 'cyan'))
-    global serverProc
-    serverProc = startServer(backupDestination + "\\DupliBackupX\\")
+    global serverproc
+    serverproc = startserver(backupdestination + "\\DupliBackupX\\")
 
-    if checkBackup() != 0:
+    if checkbackup() != 0:
         print("Backup does not exist. Importing json...")
-        if onlyImportJson == "":
-            GenerateJson()
-        importBackup()
+        if importjson == "":
+            generatejson()
+        importbackup()
         # Check again to get the DB path
-        checkBackup()
+        checkbackup()
     else:
         print("Backup exists.")
-        if onlyImportJson != "":
+        if importjson != "":
             print("Updating backup...")
-            updateBackup()
-            checkBackup()
+            updatebackup()
+            checkbackup()
         else:
-            if GenerateJson() != 0:
+            if generatejson() != 0:
                 print("Updating backup...")
-                updateBackup()
-                checkBackup()
+                updatebackup()
+                checkbackup()
             else:
                 print("No need to update the backup.")
 
     print("Running first backup...")
-    runBackup()
-    startScheduler()
-    showMenu()
+    runbackup()
+    startscheduler()
+    showmenu()
     # Exit the app when the menu exits.
     print("Exiting...")
-    stopScheduler()
-    sys.exit()
+    stopscheduler()
+    try:
+        sys.exit()
+    except:
+        pass
 
 
-def showMenu():
+def showmenu():
     menu = ConsoleMenu("DupliBackupX",
                        "Select an option",
                        clear_screen=False,
                        formatter=MenuFormatBuilder().set_title_align('center').set_subtitle_align('center').set_border_style_type(
                            MenuBorderStyleType.HEAVY_BORDER).show_prologue_top_border(True).show_prologue_bottom_border(True))
 
-    menuItems = [
-        FunctionItem("Show Backup Info", showBackupInfo),
-        FunctionItem("Open DupliBackupX server in browser", openInBrowser),
-        FunctionItem("Open Source Folder", openSourceFolder),
-        FunctionItem("Open Destination Folder", openDestinationFolder),
-        FunctionItem("List Backups", listBackups),
-        FunctionItem("Compare Backups", compareBackups),
-        FunctionItem("Restore a Backup", restoreBackup),
-        FunctionItem("Perform a Backup Now", runBackup),
+    menuitems = [
+        FunctionItem("Show Backup Info", showbackupinfo),
+        FunctionItem("Open DupliBackupX server in browser", openinbrowser),
+        FunctionItem("Open Source Folder", opensourcefolder),
+        FunctionItem("Open Destination Folder", opendestinationfolder),
+        FunctionItem("List Backups", listbackups),
+        FunctionItem("Compare Backups", comparebackups),
+        FunctionItem("Restore a Backup", restorebackup),
+        FunctionItem("Perform a Backup Now", runbackup),
     ]
-    for k in menuItems:
+    for k in menuitems:
         menu.append_item(k)
 
     menu.show()
     return
 
 
-def createPrintConfig():
+def createconfig():
     #Create displayNames (probably useless)
-    displayNames = {}
-    for value in backupSources:
+    displaynames = {}
+    for value in backupsources:
         split = value.split("\\")
         #iterate to find the last non-empty split value
         dispName = next(i for i in reversed(split) if i)
-        displayNames[value] = dispName
+        displaynames[value] = dispName
 
     # Generate dictionary from above values
     # Same data format as the json so we can use .update()
     # DBPath sadly does not work.
-    global backupConfig
-    backupConfig = {
+    global backupconfig
+    backupconfig = {
         "Schedule": None,
         "Backup": {
-            "Name": backupName,
-            "TargetURL": "file://" + backupDestination,
-            "DBPath": backupDestination + "\\DupliBackupX\\" + backupName + ".sqlite",
-            "Sources": backupSources,
+            "Name": backupname,
+            "TargetURL": "file://" + backupdestination,
+            "DBPath": backupdestination + "\\DupliBackupX\\" + backupname + ".sqlite",
+            "Sources": backupsources,
         },
-        "DisplayNames": displayNames
+        "DisplayNames": displaynames
     }
     print(colored("\n--------Configuration--------", 'cyan'))
-    if onlyImportJson != "":
-        print(colored(onlyImportJson, 'green'))
+    if importjson != "":
+        print(colored(importjson, 'green'))
         print()
-    print(colored(json.dumps(backupConfig, indent=4), 'green'))
+    print(colored(json.dumps(backupconfig, indent=4), 'green'))
     return
 
 
-def importBackup():
+def importbackup():
     # lets not bother with importing duplicati_client as a library because we don't need any advanced functionality.
     # Using the executable.
-    jsonfile = backupDestination + "\\DupliBackupX\\" + backupName + ".json"
-    if onlyImportJson != "":
-        jsonfile = onlyImportJson
-    callArgs = [duplicaticlientLocation + "duplicati_client", "create", "backup", jsonfile]
-    subprocess.run(callArgs)
+    jsonfile = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
+    if importjson != "":
+        jsonfile = importjson
+    callargs = [duplicaticlient_location + "duplicati_client", "create", "backup", jsonfile]
+    subprocess.run(callargs)
     return
 
 
-def updateBackup():
-    jsonfile = backupDestination + "\\DupliBackupX\\" + backupName + ".json"
-    if onlyImportJson != "":
-        jsonfile = onlyImportJson
-    callArgs = [duplicaticlientLocation + "duplicati_client", "update", "backup", "1", jsonfile]
-    subprocess.run(callArgs)
+def updatebackup():
+    jsonfile = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
+    if importjson != "":
+        jsonfile = importjson
+    callargs = [duplicaticlient_location + "duplicati_client", "update", "backup", "1", jsonfile]
+    subprocess.run(callargs)
     return
 
 
 # Returns 2 if the backup doesn't exist, 0 if it exists
-def checkBackup():
+def checkbackup():
     print("Checking for backup...")
-    callArgs = [duplicaticlientLocation + "duplicati_client", "get", "backup", "1"]
-    checkresult = subprocess.run(callArgs, capture_output=True, text=True)
+    callargs = [duplicaticlient_location + "duplicati_client", "get", "backup", "1"]
+    checkresult = subprocess.run(callargs, capture_output=True, text=True)
     #print(checkresult.stdout)
     #print(checkresult.stderr)
     split1 = checkresult.stdout.split("database: ")
-    global backupDBPath
+    global backupdbpath
     if checkresult.returncode == 0:
-        backupDBPath = split1[1].split("\n")[0]
+        backupdbpath = split1[1].split("\n")[0]
     return checkresult.returncode
 
 
-def showBackupInfo():
+def showbackupinfo():
     # Returns 2 if backup doesnt exist, 0 if it exists
-    callArgs = [duplicaticlientLocation + "duplicati_client", "get", "backup", "1"]
-    subprocess.run(callArgs)
+    callargs = [duplicaticlient_location + "duplicati_client", "get", "backup", "1"]
+    subprocess.run(callargs)
 
 
-def listBackups():
-    callArgs = [
-        duplicatiLocation + "duplicati.commandline", "list", backupDestination, "--dbpath=" + backupDBPath, "--encryption-module=", "--compression-module=zip",
+def listbackups():
+    callargs = [
+        duplicati_location + "duplicati.commandline", "list", backupdestination, "--dbpath=" + backupdbpath, "--encryption-module=", "--compression-module=zip",
         "--no-encryption=true"
     ]
-    subprocess.run(callArgs)
+    subprocess.run(callargs)
 
 
-def startScheduler():
+def startscheduler():
     #Start the backup scheduler
     print("Starting the backup scheduler...")
     global theInterval
-    theInterval = setInterval(backupTimer, runBackup)
+    theInterval = SetInterval(backuptimer, runbackup)
     return
 
 
-def stopScheduler():
+def stopscheduler():
     #Stop the backup scheduler
     print("Stopping the backup scheduler...")
     global theInterval
@@ -255,58 +261,58 @@ def stopScheduler():
     return
 
 
-def openSourceFolder():
-    callArgs = ["explorer", backupSources[0]]
-    subprocess.run(callArgs)
+def opensourcefolder():
+    callargs = ["explorer", backupsources[0]]
+    subprocess.run(callargs)
 
 
-def openInBrowser():
-    webbrowser.open("http://localhost:" + servicePort)
+def openinbrowser():
+    webbrowser.open("http://localhost:" + serviceport)
 
 
-def openDestinationFolder():
-    callArgs = ["explorer", backupDestination]
-    subprocess.run(callArgs)
+def opendestinationfolder():
+    callargs = ["explorer", backupdestination]
+    subprocess.run(callargs)
 
 
-def compareBackups():
-    compareVer1 = input("Enter first version number to compare: ")
-    compareVer2 = input("Enter second version number to compare: ")
-    callArgs = [
-        duplicatiLocation + "duplicati.commandline", "compare", backupDestination, "--dbpath=" + backupDBPath, "--encryption-module=",
-        "--compression-module=zip", "--no-encryption=true", compareVer1, compareVer2
+def comparebackups():
+    comparever1 = input("Enter first version number to compare: ")
+    comparever2 = input("Enter second version number to compare: ")
+    callargs = [
+        duplicati_location + "duplicati.commandline", "compare", backupdestination, "--dbpath=" + backupdbpath, "--encryption-module=",
+        "--compression-module=zip", "--no-encryption=true", comparever1, comparever2
     ]
-    subprocess.run(callArgs)
+    subprocess.run(callargs)
     #input("\nEnter anything to return to the menu...")
 
 
-def restoreBackup():
-    restoreVersion = input("Enter the version number to restore: ")
-    callArgs = [
-        duplicatiLocation + "duplicati.commandline", "restore", backupDestination, "--dbpath=" + backupDBPath, "--encryption-module=",
+def restorebackup():
+    restoreversion = input("Enter the version number to restore: ")
+    callargs = [
+        duplicati_location + "duplicati.commandline", "restore", backupdestination, "--dbpath=" + backupdbpath, "--encryption-module=",
         "--compression-module=zip", "--no-encryption=true",
-        "--restore-path=" + backupDestination + "\\Restored_" + datetime.now().strftime("%Y-%m-%d_%H%M%S") + "_" + restoreVersion, "--version=" + restoreVersion
+        "--restore-path=" + backupdestination + "\\Restored_" + datetime.now().strftime("%Y-%m-%d_%H%M%S") + "_" + restoreversion, "--version=" + restoreversion
     ]
-    subprocess.run(callArgs)
+    subprocess.run(callargs)
     #input("\nEnter anything to return to the menu...")
 
 
-def runBackup():
+def runbackup():
     #print("Running backup...")
-    callArgs = [duplicaticlientLocation + "duplicati_client", "run", "1"]
-    runresult = subprocess.run(callArgs, capture_output=True, text=True)
+    callargs = [duplicaticlient_location + "duplicati_client", "run", "1"]
+    runresult = subprocess.run(callargs, capture_output=True, text=True)
     return
 
 
 # Returns 1 if the file was updated.
-def GenerateJson():
+def generatejson():
     filename = "DupliBackupX_BASE.json"
     with open(filename, "r") as basefile:
         basedata = json.load(basefile)
 
     currentdata = None
     try:
-        filename = backupDestination + "\\DupliBackupX\\" + backupName + ".json"
+        filename = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
         with open(filename, "r") as basefile:
             currentdata = json.load(basefile)
     except:
@@ -314,14 +320,14 @@ def GenerateJson():
 
     # Update the subkeys
     # This way we can keep the default values like Backup.ID and Backup.Settings instead of overwriting ["Backup"] and deleting them
-    basedata["Backup"].update(backupConfig["Backup"])
-    basedata["DisplayNames"].update(backupConfig["DisplayNames"])
-    basedata["Schedule"] = backupConfig["Schedule"]
+    basedata["Backup"].update(backupconfig["Backup"])
+    basedata["DisplayNames"].update(backupconfig["DisplayNames"])
+    basedata["Schedule"] = backupconfig["Schedule"]
 
     if currentdata == basedata:
         return 0
 
-    newfile = backupDestination + "\\DupliBackupX\\" + backupName + ".json"
+    newfile = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
     with open(newfile, "w") as nfile:
         json.dump(basedata, nfile, indent=2)
 
@@ -329,48 +335,48 @@ def GenerateJson():
 
 
 # Returns 1 if the file was updated.
-def importJsonValues():
-    filename = onlyImportJson
+def importjsonvalues():
+    filename = importjson
     with open(filename, "r") as basefile:
         basedata = json.load(basefile)
 
-    global backupName, backupDestination, backupSources
-    backupName = basedata["Backup"]["Name"]
-    backupDestination = basedata["Backup"]["TargetURL"].split("file://")[1]
-    backupSources = basedata["Backup"]["Sources"]
+    global backupname, backupdestination, backupsources
+    backupname = basedata["Backup"]["Name"]
+    backupdestination = basedata["Backup"]["TargetURL"].split("file://")[1]
+    backupsources = basedata["Backup"]["Sources"]
 
     return
 
 
-def startServer(serverdatafolder):
+def startserver(serverdatafolder):
     #Duplicati.Server --webservice-port=8304 --server-datafolder=D:\DUMMY\DupliBackupX
     print("Starting Duplicati Server...")
-    callArgs = [duplicatiLocation + "Duplicati.Server", "--webservice-port=" + servicePort, "--server-datafolder=" + serverdatafolder]
-    proc = subprocess.Popen(callArgs)
+    callargs = [duplicati_location + "Duplicati.Server", "--webservice-port=" + serviceport, "--server-datafolder=" + serverdatafolder]
+    proc = subprocess.Popen(callargs)
     #Login using duplicati-client (once is enough, unless you are using it for another server as well)
-    callArgs = [duplicaticlientLocation + "duplicati_client", "login", "http://localhost:" + servicePort]
-    subprocess.run(callArgs)
+    callargs = [duplicaticlient_location + "duplicati_client", "login", "http://localhost:" + serviceport]
+    subprocess.run(callargs)
     return proc
 
 
-def stopServer():
+def stopserver():
     #Duplicati.Server.exe --webservice-port=8300 --server-datafolder=D:\DUMMY\DupliBackupX
     print("Stopping Duplicati Server...")
-    global serverProc
-    serverProc.terminate()
+    global serverproc
+    serverproc.terminate()
     return
 
 
 # Basic threaded interval function that is used for scheduling
-class setInterval:
+class SetInterval:
     def __init__(self, interval, action):
         self.interval = interval
         self.action = action
         self.stopEvent = threading.Event()
-        thread = threading.Thread(target=self.__setInterval)
+        thread = threading.Thread(target=self.__SetInterval)
         thread.start()
 
-    def __setInterval(self):
+    def __SetInterval(self):
         nextTime = time.time() + self.interval
         while not self.stopEvent.wait(nextTime - time.time()):
             nextTime += self.interval
@@ -381,7 +387,7 @@ class setInterval:
 
 
 def exit_handler():
-    stopServer()
+    stopserver()
     return
 
 
@@ -390,6 +396,6 @@ if __name__ == "__main__":
     parser.add_argument("--jsonfile", help="Optional: import a json file instead of using the backup config")
     args = parser.parse_args()
     if args.jsonfile != None:
-        onlyImportJson = args.jsonfile
+        importjson = args.jsonfile
     atexit.register(exit_handler)
     main()
