@@ -1,0 +1,88 @@
+{
+  "CreatedByVersion": "2.0.5.107",
+  "Schedule": {
+    "ID": 1,
+    "Tags": [
+      "ID=1"
+    ],
+    "Time": "2020-01-01T10:00:00Z",
+    "Repeat": "600s",
+    "LastRun": "0001-01-01T00:00:00Z",
+    "Rule": "AllowedWeekDays=Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday",
+    "AllowedDays": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "sun"
+    ]
+  },
+  "Backup": {
+    "ID": "1",
+    "Name": "DUMMYNAME",
+    "Description": "",
+    "Tags": [],
+    "TargetURL": "file://D:\\DUMMY\\DUMMYTARGET",
+    "DBPath": "D:\\DUMMY\\DUMMY.sqlite",
+    "Sources": [
+      "D:\\DUMMY\\DUMMYSOURCE\\"
+    ],
+    "Settings": [
+      {
+        "Filter": "",
+        "Name": "encryption-module",
+        "Value": "",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "compression-module",
+        "Value": "zip",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "dblock-size",
+        "Value": "20MB",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "auto-vacuum",
+        "Value": "true",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "auto-vacuum-interval",
+        "Value": "120m",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "thread-priority",
+        "Value": "low",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "log-retention",
+        "Value": "2D",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "--no-encryption",
+        "Value": "true",
+        "Argument": null
+      }
+    ],
+    "Filters": [],
+    "Metadata": {},
+    "IsTemporary": false
+  },
+  "DisplayNames": {
+  }
+}
