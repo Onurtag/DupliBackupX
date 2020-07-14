@@ -1,45 +1,46 @@
 import subprocess, sys, time, threading, json, webbrowser
 import atexit
 import argparse
+from os import path
 from datetime import datetime
 from termcolor import colored
 from consolemenu import *
 from consolemenu.format import *
 from consolemenu.items import *
 
-## -------- DupliBackupX --------  
-## https://github.com/Onurtag/DupliBackupX  
-## 
-## 📑 The main purpose of DupliBackupX is to be able to quickly create and remove a portable backup set.  
-## What DupliBackupX does can be done using duplicati.commandline in a few lines, but with a bit worse performance as it is a bit slow at startup.  
-## 
-## 📂 The destination folder will include everything that was used in the backup:  
+## -------- DupliBackupX --------
+## https://github.com/Onurtag/DupliBackupX
+##
+## 📑 The main purpose of DupliBackupX is to be able to quickly create and remove a portable backup set.
+## What DupliBackupX does can be done using duplicati.commandline in a few lines, but with a bit worse performance as it is a bit slow at startup.
+##
+## 📂 The destination folder will include everything that was used in the backup:
 ## - Files that are backed-up
 ## - Duplicati server database, duplicati backup database
 ## - Backups that were restored using the menu
-## - Generated json file (if Backup Config is used)  
-## 
-## When they are no longer needed, you can just delete the destination folder to quickly get rid of everything.  
+## - Generated json file (if Backup Config is used)
+##
+## When they are no longer needed, you can just delete the destination folder to quickly get rid of everything.
 ## ___
-## For configuration, you can either use the inline Backup Config or just import a duplicati .json file.  
-## 
-## ⭐ You can import a json file using the commandline argument --jsonfile. For example:  
-## 
-##     python DupliBackupX --jsonfile="D:\MyBackup.json"  
-## 
-##  When using the inline Backup Config, the base file will be DupliBackupX_BASE.json. The Backup Config values will be added onto that.  
-## 
-## 
-## 👟 Used applications:  
-## - duplicati 2 (https://github.com/duplicati/duplicati)  
-## - duplicati-client (https://github.com/Pectojin/duplicati-client)  
-## 
-## 📚 Used pip libraries:  
-## - termcolor (https://pypi.org/project/termcolor/)  
-## - consolemenu (consolemenu was modified to prevent it from clearing the screen: https://github.com/Onurtag/console-menu)  
-## 
+## For configuration, you can either use the inline Backup Config or just import a duplicati .json file.
+##
+## ⭐ You can import a json file using the commandline argument --jsonfile. For example:
+##
+##     python DupliBackupX --jsonfile="D:\MyBackup.json"
+##
+##  When using the inline Backup Config, the base file will be DupliBackupX_BASE.json. The Backup Config values will be added onto that.
+##
+##
+## 👟 Used applications:
+## - duplicati 2 (https://github.com/duplicati/duplicati)
+## - duplicati-client (https://github.com/Pectojin/duplicati-client)
+##
+## 📚 Used pip libraries:
+## - termcolor (https://pypi.org/project/termcolor/)
+## - consolemenu (consolemenu was modified to prevent it from clearing the screen: https://github.com/Onurtag/console-menu)
+##
 
-# TODO maybe add application config commandline.
+# TODO maybe add application config commandline. Or a custom settings file like an .ini
 
 ########################
 #######  Config  #######
@@ -48,11 +49,13 @@ from consolemenu.items import *
 # ---------- 👟 Application config -------
 # Backup timer (seconds). Making this too short might be unwise. 60 seconds will not be enough for larger backups.
 backuptimer = 60
-# Duplicati 2 and Duplicati_client folders. These could be empty if they are on your PATH variables
+
+# Duplicati 2 and Duplicati_client folders. These could be empty if they are on your PATH variables.
 duplicati_location = "C:\\Program Files\\Duplicati 2\\"
-duplicaticlient_location = "C:\\DATA\\Portables\\duplicati_client\\"
+# Duplicati_client will run from source if duplicati_client.py is in the folder.
+duplicaticlient_location = "C:\\DATA\\Portables\\duplicati_client\\source\\"
 # Duplicati server port.
-serviceport = "8304"
+serviceport = "8300"
 
 # Only import json. Enter a json file path to ignore the backup config and just import the json file.
 # You can use the commandline argument --jsonfile to set this
@@ -92,10 +95,13 @@ backupsources = [
 ########################
 ########################
 
+version = "1.0.0"
 backupconfig = {}
 theInterval = None
 serverproc = None
 backupdbpath = ""
+duplicaticlient_ext = ""
+duplicaticlient_python = None
 
 
 def main():
@@ -193,6 +199,10 @@ def createconfig():
         print(colored(importjson, 'green'))
         print()
     print(colored(json.dumps(backupconfig, indent=4), 'green'))
+    if path.exists(duplicaticlient_location + "duplicati_client.py"):
+        global duplicaticlient_ext, duplicaticlient_python
+        duplicaticlient_ext = ".py"
+        duplicaticlient_python = "python"
     return
 
 
@@ -202,7 +212,9 @@ def importbackup():
     jsonfile = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
     if importjson != "":
         jsonfile = importjson
-    callargs = [duplicaticlient_location + "duplicati_client", "create", "backup", jsonfile]
+    callargs = [duplicaticlient_location + "duplicati_client" + duplicaticlient_ext, "create", "backup", jsonfile]
+    if duplicaticlient_python != None:
+        callargs.insert(0, duplicaticlient_python)
     subprocess.run(callargs)
     return
 
@@ -211,7 +223,9 @@ def updatebackup():
     jsonfile = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
     if importjson != "":
         jsonfile = importjson
-    callargs = [duplicaticlient_location + "duplicati_client", "update", "backup", "1", jsonfile]
+    callargs = [duplicaticlient_location + "duplicati_client" + duplicaticlient_ext, "update", "backup", "1", jsonfile]
+    if duplicaticlient_python != None:
+        callargs.insert(0, duplicaticlient_python)
     subprocess.run(callargs)
     return
 
@@ -219,7 +233,9 @@ def updatebackup():
 # Returns 2 if the backup doesn't exist, 0 if it exists
 def checkbackup():
     print("Checking for backup...")
-    callargs = [duplicaticlient_location + "duplicati_client", "get", "backup", "1"]
+    callargs = [duplicaticlient_location + "duplicati_client" + duplicaticlient_ext, "get", "backup", "1"]
+    if duplicaticlient_python != None:
+        callargs.insert(0, duplicaticlient_python)
     checkresult = subprocess.run(callargs, capture_output=True, text=True)
     #print(checkresult.stdout)
     #print(checkresult.stderr)
@@ -232,7 +248,9 @@ def checkbackup():
 
 def showbackupinfo():
     # Returns 2 if backup doesnt exist, 0 if it exists
-    callargs = [duplicaticlient_location + "duplicati_client", "get", "backup", "1"]
+    callargs = [duplicaticlient_location + "duplicati_client" + duplicaticlient_ext, "get", "backup", "1"]
+    if duplicaticlient_python != None:
+        callargs.insert(0, duplicaticlient_python)
     subprocess.run(callargs)
 
 
@@ -300,7 +318,9 @@ def restorebackup():
 
 def runbackup():
     #print("Running backup...")
-    callargs = [duplicaticlient_location + "duplicati_client", "run", "1"]
+    callargs = [duplicaticlient_location + "duplicati_client" + duplicaticlient_ext, "run", "1"]
+    if duplicaticlient_python != None:
+        callargs.insert(0, duplicaticlient_python)
     runresult = subprocess.run(callargs, capture_output=True, text=True)
     return
 
@@ -353,9 +373,11 @@ def startserver(serverdatafolder):
     #Duplicati.Server --webservice-port=8304 --server-datafolder=D:\DUMMY\DupliBackupX
     print("Starting Duplicati Server...")
     callargs = [duplicati_location + "Duplicati.Server", "--webservice-port=" + serviceport, "--server-datafolder=" + serverdatafolder]
-    proc = subprocess.Popen(callargs)
+    proc = subprocess.Popen(callargs, creationflags=subprocess.IDLE_PRIORITY_CLASS)
     #Login using duplicati-client (once is enough, unless you are using it for another server as well)
-    callargs = [duplicaticlient_location + "duplicati_client", "login", "http://localhost:" + serviceport]
+    callargs = [duplicaticlient_location + "duplicati_client" + duplicaticlient_ext, "login", "http://localhost:" + serviceport]
+    if duplicaticlient_python != None:
+        callargs.insert(0, duplicaticlient_python)
     subprocess.run(callargs)
     return proc
 
@@ -393,8 +415,9 @@ def exit_handler():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog="DupliBackupX")
     parser.add_argument("--jsonfile", help="Optional: import a json file instead of using the backup config")
+    parser.add_argument('--version', action='version', version='%(prog)s ' + version)
     args = parser.parse_args()
     if args.jsonfile != None:
         importjson = args.jsonfile
