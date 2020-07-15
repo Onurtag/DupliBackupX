@@ -58,6 +58,8 @@ ___
    
 """
 
+# TODO update version
+
 ########################
 #######  Config  #######
 ########################
@@ -113,7 +115,7 @@ backupsources = [
 ########################
 ########################
 
-version = "1.0.0"
+version_number = "1.0.1"
 backupconfig = {}
 theInterval = None
 serverproc = None
@@ -171,11 +173,14 @@ def main():
 
 
 def showmenu():
-    menu = ConsoleMenu("DupliBackupX",
-                       "Select an option by entering its number",
-                       clear_screen=False,
-                       formatter=MenuFormatBuilder().set_title_align('center').set_subtitle_align('center').set_border_style_type(
-                           MenuBorderStyleType.HEAVY_BORDER).show_prologue_top_border(True).show_prologue_bottom_border(True))
+    menu = ConsoleMenu(
+        colored("　　　　　" + "DupliBackupX v" + version_number + "　　　　", 'green'),
+        colored("　　　　　" + "Backup Name: " + backupname + "　　　　", 'cyan'),
+        #add double space "　" paddings around colored strings to fix the menu borders. 5 left, 4 right (for windows only?)
+        prologue_text="Select an option by entering its number",
+        clear_screen=False,
+        formatter=MenuFormatBuilder().set_title_align('center').set_subtitle_align('center').set_border_style_type(
+            MenuBorderStyleType.HEAVY_BORDER).show_prologue_top_border(False).show_prologue_bottom_border(False).set_prologue_text_align(align="center"))
 
     menuitems = [
         FunctionItem("Show Backup Info", showbackupinfo),
@@ -482,7 +487,7 @@ if __name__ == "__main__":
     parser.add_argument("--timer", help="use a custom timer in seconds instead of the default " + str(backuptimer))
     parser.add_argument("--duplicati", help="use commandline to set duplicati folder path instead of using the inline application config")
     parser.add_argument("--duplicaticlient", help="use commandline to set duplicati_client folder path instead of using the inline application config")
-    parser.add_argument("--version", action="version", version="%(prog)s " + version)
+    parser.add_argument("--version", action="version", version="%(prog)s " + version_number)
     args = parser.parse_args()
     if args.jsonfile != None:
         importjson = args.jsonfile
