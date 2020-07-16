@@ -11,7 +11,7 @@ Menu, Tray, Icon, %IcoFile%
 Menu, Tray, NoStandard
 Menu, Tray, Add, Show/Hide DupliBackupX, ShowHideWindow
 Menu, Tray, Add
-Menu, Tray, Standard
+;Menu, Tray, Standard
 Menu, Tray, Default, Show/Hide DupliBackupX
 OnExit, Exited
 
