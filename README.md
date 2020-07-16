@@ -40,8 +40,9 @@ ___
 ### **Extra: DupliBackupX Helper.ahk**
 
 A very basic Autohotkey script that does the following work:  
-- when the duplibackupx window is minimized, it hides the window and when you click the tray icon it shows it.
-- when you close the ahk script from its tray window, it closes the hidden window.
+- When opened, it starts DupliBackupX and sets the icon and the window title of its console window.
+- When the DupliBackupX window is minimized, it hides the window and when you click the tray icon it shows it.
+- When you close the ahk script from its tray window, it closes the hidden window.
 
 Don't forget to configure the script before running. Configuration lines are marked with ❗❗❗.
 
