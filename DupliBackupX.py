@@ -67,7 +67,7 @@ ___
  - consolemenu (consolemenu was modified to prevent it from clearing the screen: https://github.com/Onurtag/console-menu)  
    
  🤖 Icon font:  
- - Octicity https://www.1001fonts.com/octicity-font.html (free for personal use)
+ - Octicity (http://www.umop.com/)
 """
 
 # TODO update version
