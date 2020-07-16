@@ -11,6 +11,7 @@ Menu, Tray, Icon, %IcoFile%
 Menu, Tray, NoStandard
 Menu, Tray, Add, Show/Hide DupliBackupX, ShowHideWindow
 Menu, Tray, Add
+Menu, Tray, Add, Exit, Exited
 ;Menu, Tray, Standard
 Menu, Tray, Default, Show/Hide DupliBackupX
 OnExit, Exited
@@ -29,7 +30,7 @@ jsonfilepath = %A_ScriptDir%\jsonimports\Import1_DupliBackupX.json
 ; ❗❗❗ Set your commandline here
 Run, powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile="%jsonfilepath%" --port=8203 --timer=60,,, procPID
 WinWait, ahk_pid %procPID%,, 20
-Sleep, 200
+Sleep, 100
 winID := WinExist("ahk_pid" procPID)
 
 /*
@@ -95,7 +96,6 @@ Return
 
 Exited:
     if (needtoCloseWindow) {
-        MsgBox, tata
         WinClose, ahk_pid %procPID%
     }
 ExitApp
