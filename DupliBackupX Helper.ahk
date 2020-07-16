@@ -14,7 +14,7 @@ Menu, Tray, Add
 Menu, Tray, Add, Exit, Exited
 ;Menu, Tray, Standard
 Menu, Tray, Default, Show/Hide DupliBackupX
-OnExit, Exited
+OnExit("Exiting")
 
 /*
     What this script does:
@@ -94,8 +94,21 @@ ShowHideWindow:
     }
 Return
 
-Exited:
+Exited:    
+    ExitApp
+Return
+
+Exiting(ExitReason, ExitCode) {
+    Global
     if (needtoCloseWindow) {
+        ;Bug: Show window before closing or the DupliBackupX exit functions don't work (Duplicati server stays open)
+        WinShow, ahk_pid %procPID%
         WinClose, ahk_pid %procPID%
+        WinWaitClose, ahk_pid %procPID%
+    } else {
+        ;Close the DupliBackupX window even if its still visible
+        WinClose, ahk_pid %procPID%
+        WinWaitClose, ahk_pid %procPID%
     }
-ExitApp
+    ExitApp
+}
