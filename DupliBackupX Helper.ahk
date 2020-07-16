@@ -6,7 +6,7 @@ SendMode Input ; Recommended for new scripts due to its superior speed and relia
 SetFormat, float, 0.3
 
 ; ❗❗❗ DBX icon file path
-IcoFile := "DBX.ico"
+IcoFile = %A_ScriptDir%\DBX.ico
 Menu, Tray, Icon, %IcoFile%
 Menu, Tray, NoStandard
 Menu, Tray, Add, Show/Hide DupliBackupX, ShowHideWindow
@@ -23,11 +23,11 @@ OnExit, Exited
 */
 
 ; ❗❗❗ Json file path
-jsonfilepath := "C:\\jsonimports\Import1_DupliBackupX.json"
+jsonfilepath = %A_ScriptDir%\jsonimports\Import1_DupliBackupX.json
 
 ;Run DupliBackupX and get the pid
 ; ❗❗❗ Set your commandline here
-Run, wt -d . -p "DupliBackupX" python "C:\DupliBackupX\DupliBackupX.py" --jsonfile="%jsonfilepath%" --port=8203 --timer=60,,, procPID
+Run, powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile="%jsonfilepath%" --port=8203 --timer=60,,, procPID
 WinWait, ahk_pid %procPID%,, 20
 Sleep, 200
 winID := WinExist("ahk_pid" procPID)
@@ -46,10 +46,12 @@ h_Icon:=DllCall("LoadImage"
 
 -----
 */
-;Set window title/taskbar/alt+tab menu icons
+; ! Change the shell window's title/taskbar/alt+tab menu icons to DBU icon
 hIcon := DllCall( "LoadImage", UInt,0, Str,IcoFile, UInt,1, UInt,24, UInt,24, UInt,0x10 )
 SendMessage, 0x80, 0, hIcon ,, ahk_id %winID% ; One affects Title bar and
 SendMessage, 0x80, 1, hIcon ,, ahk_id %winID% ; the other the ALT+TAB menu
+; ! Change the window title to DupliBackupX
+WinSetTitle, ahk_pid %procPID%,, DupliBackupX
 
 needtoCloseWindow := 1
 currentlyHidden := 0
