@@ -48,6 +48,16 @@ python DupliBackupX --jsonfile="D:\MyBackup.json" --timer=120 --port=8408 --dupl
 ```
 ___
 
+### **Extra: DupliBackupX Helper.ahk**
+
+A very basic Autohotkey script that does the following work:  
+- when the duplibackupx window is minimized, it hides the window and when you click the tray icon it shows it.
+- when you close the ahk script from its tray window, it closes the hidden window.
+
+Don't forget to configure the script before running. Configuration lines are marked with ❗❗❗.
+
+___
+
  👟 Used applications:  
  - duplicati 2 (https://github.com/duplicati/duplicati)  
  - duplicati-client (https://github.com/Pectojin/duplicati-client)  
@@ -56,6 +66,8 @@ ___
  - termcolor (https://pypi.org/project/termcolor/)  
  - consolemenu (consolemenu was modified to prevent it from clearing the screen: https://github.com/Onurtag/console-menu)  
    
+ 🤖 Icon font:  
+ - Octicity https://www.1001fonts.com/octicity-font.html (free for personal use)
 """
 
 # TODO update version
