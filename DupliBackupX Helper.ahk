@@ -1,11 +1,9 @@
-﻿#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-;#Warn  ; Enable warnings to assist with detecting common errors.
-SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-#SingleInstance, Force
+﻿#NoEnv
+SendMode Input
+#SingleInstance, force
 #Persistent
 SetFormat, float, 0.3
-
-; ❗❗❗ DBX icon file path
+; ❗ DBX .ico path
 IcoFile = %A_ScriptDir%\DBX.ico
 Menu, Tray, Icon, %IcoFile%
 Menu, Tray, NoStandard
@@ -25,20 +23,35 @@ A very basic Autohotkey script that does the following work:
     When the DupliBackupX window is minimized, it hides the window and when you click the tray icon it shows it.
     When you close the ahk script from its tray window, it closes the hidden window.
 
-Don't forget to configure the script before running. Configuration lines are marked with ❗❗❗.
-
-
+Configuration lines are marked with ❗❗❗. Don't forget to configure the script before running.
+If you want to run multiple instances of this helper script, copy it with a different name and edit the config values.
 */
 
-; ❗❗❗ Json file path
-jsonfilepath = %A_ScriptDir%\jsonimports\Import1_DupliBackupX.json
+;----- DupliBackupX Helper Configuration -----
+
+; ❗❗❗ Json file path:
+jsonfilePath = %A_ScriptDir%\jsonimports\Import1_DupliBackupX.json
 
 ;Run DupliBackupX and get the pid
-; ❗❗❗ Set your commandline here
-Run, powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile="%jsonfilepath%" --port=8201 --timer=60,,, procPID
+; ❗❗❗ Set your commandline here:
+Run, powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile="%jsonfilePath%" --port=8201 --timer=60,,, procPID
 WinWait, ahk_pid %procPID%,, 20
 Sleep, 100
 winID := WinExist("ahk_pid" procPID)
+
+
+;----- Extra Features -----
+
+; ❗❗ Track log file for warnings/errors
+; Only works when you have the "--log-file" settings enabled within your imported json file. 
+; Having --log-file-log-level as Warning or Error is also pretty much required.
+
+; Enable Tracking of log changes:
+trackLogChanges := 1
+;Check the log file for modifications every x milliseconds:
+trackLogTimer := 60 * 1000      ;60 x 1000 milliseconds = 60 seconds
+
+;--------------------------
 
 /*
 -----
@@ -61,9 +74,19 @@ SendMessage, 0x80, 1, hIcon ,, ahk_id %winID% ; the other the ALT+TAB menu
 ; ! Change the window title to DupliBackupX
 WinSetTitle, ahk_pid %procPID%,, DupliBackupX
 
+;Get the log file location from the imported json
+FileRead, jsonfileData, %jsonfilePath%
+logFile := RegExReplace(jsonfileData, "sm).*?""Name"":\ ""--log-file"",\s*?""Value"":\ ""(.*?)"",.*" , Replacement := "$1", OutputVarCount := "", Limit := -1, StartingPosition := 1)
+logFile := StrReplace(logFile, "\\", "\")
+;Get log file modification time
+FileGetTime, logfileModifiedTime, %logFile%, M
+
 needtoCloseWindow := 1
 currentlyHidden := 0
 SetTimer, CheckIfMinimized, 150
+if (trackLogChanges) {
+    SetTimer, CheckIfLogModified, %trackLogTimer%
+}
 Return
 
 CheckIfMinimized:
@@ -98,6 +121,14 @@ ShowHideWindow:
         SetTimer, CheckIfMinimized, Off
         WinHide, ahk_pid %procPID%
         currentlyHidden = 1
+    }
+Return
+
+CheckIfLogModified:
+    FileGetTime, logfileModifiedTime_new, %logFile%, M
+    if (logfileModifiedTime_new != logfileModifiedTime) {
+        logfileModifiedTime := logfileModifiedTime_new
+        TrayTip, DupliBackupX Helper, DupliBackupX log file was modified.`nAn error or a warning might have occurred., 5, 0x10
     }
 Return
 
