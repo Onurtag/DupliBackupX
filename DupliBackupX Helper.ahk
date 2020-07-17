@@ -77,6 +77,9 @@ WinSetTitle, ahk_pid %procPID%,, DupliBackupX
 ;Get the log file location from the imported json
 FileRead, jsonfileData, %jsonfilePath%
 logFile := RegExReplace(jsonfileData, "sm).*?""Name"":\ ""--log-file"",\s*?""Value"":\ ""(.*?)"",.*" , Replacement := "$1", OutputVarCount := "", Limit := -1, StartingPosition := 1)
+if (logFile == "") {
+    trackLogChanges = 0
+}
 logFile := StrReplace(logFile, "\\", "\")
 ;Get log file modification time
 FileGetTime, logfileModifiedTime, %logFile%, M
