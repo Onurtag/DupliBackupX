@@ -79,17 +79,14 @@ FileRead, jsonfileData, %jsonfilePath%
 logFile := RegExReplace(jsonfileData, "sm).*?""Name"":\ ""--log-file"",\s*?""Value"":\ ""(.*?)"",.*" , Replacement := "$1", OutputVarCount := "", Limit := -1, StartingPosition := 1)
 if (logFile == "") {
     trackLogChanges = 0
+} else {
+    logFile := StrReplace(logFile, "\\", "\")
+    FileGetTime, logfileModifiedTime, %logFile%, M
+    SetTimer, CheckIfLogModified, %trackLogTimer%
 }
-logFile := StrReplace(logFile, "\\", "\")
-;Get log file modification time
-FileGetTime, logfileModifiedTime, %logFile%, M
-
 needtoCloseWindow := 1
 currentlyHidden := 0
 SetTimer, CheckIfMinimized, 150
-if (trackLogChanges) {
-    SetTimer, CheckIfLogModified, %trackLogTimer%
-}
 Return
 
 CheckIfMinimized:
