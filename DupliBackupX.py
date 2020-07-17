@@ -100,7 +100,7 @@ backupsources = [
 ########################
 ########################
 
-version_number = "1.0.2"
+version_number = "1.0.3"
 
 # Start the server with auto updates disabled. 
 # This is non-standard usage so usagereporter is disabled as well.
@@ -138,6 +138,7 @@ def main():
         if importjson != "":
             if compareimportedjson() != 0:
                 print("Updating backup...")
+                copyimportedjson()
                 updatebackup()
                 checkbackup()
             else:
@@ -378,7 +379,6 @@ def generatejson():
     return 1
 
 
-# Returns 1 if the imported json file was different
 def copyimportedjson():
     filename = importjson
     with open(filename, "r") as basefile:

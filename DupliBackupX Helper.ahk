@@ -27,7 +27,9 @@ Configuration lines are marked with ❗❗❗. Don't forget to configure the scr
 If you want to run multiple instances of this helper script, copy it with a different name and edit the config values.
 */
 
-;----- DupliBackupX Helper Configuration -----
+;------ DupliBackupX Helper Configuration ------
+
+;----- Required -----
 
 ; ❗❗❗ Json file path:
 jsonfilePath = %A_ScriptDir%\jsonimports\Import1_DupliBackupX.json
@@ -40,18 +42,17 @@ Sleep, 100
 winID := WinExist("ahk_pid" procPID)
 
 
-;----- Extra Features -----
+;----- Extra Features (disable if not needed) -----
 
-; ❗❗ Track log file for warnings/errors
+; ❗ Track log file for warnings/errors
 ; Only works when you have the "--log-file" settings enabled within your imported json file. 
 ; Having --log-file-log-level as Warning or Error is also pretty much required.
-
-; Enable Tracking of log changes:
+; ❗❗❗ Enable Tracking of log changes:
 trackLogChanges := 1
 ;Check the log file for modifications every x milliseconds:
 trackLogTimer := 60 * 1000      ;60 x 1000 milliseconds = 60 seconds
 
-;--------------------------
+;-----------------------------------------------
 
 /*
 -----
