@@ -17,10 +17,17 @@ Menu, Tray, Default, Show/Hide DupliBackupX
 OnExit("Exiting")
 
 /*
-    What this script does:
-    - when the duplibackupx window is minimized, it hides the window and when you click the tray icon it shows it.
-    - when you close the ahk script from its tray window, it closes the hidden window.
-    Configuration lines are marked with ❗❗❗
+
+DupliBackupX Helper.ahk
+A very basic Autohotkey script that does the following work:
+
+    When opened, it starts DupliBackupX and sets the icon and the window title of its console window.
+    When the DupliBackupX window is minimized, it hides the window and when you click the tray icon it shows it.
+    When you close the ahk script from its tray window, it closes the hidden window.
+
+Don't forget to configure the script before running. Configuration lines are marked with ❗❗❗.
+
+
 */
 
 ; ❗❗❗ Json file path
@@ -28,7 +35,7 @@ jsonfilepath = %A_ScriptDir%\jsonimports\Import1_DupliBackupX.json
 
 ;Run DupliBackupX and get the pid
 ; ❗❗❗ Set your commandline here
-Run, powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile="%jsonfilepath%" --port=8203 --timer=60,,, procPID
+Run, powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile="%jsonfilepath%" --port=8201 --timer=60,,, procPID
 WinWait, ahk_pid %procPID%,, 20
 Sleep, 100
 winID := WinExist("ahk_pid" procPID)
@@ -101,7 +108,7 @@ Return
 Exiting(ExitReason, ExitCode) {
     Global
     if (needtoCloseWindow) {
-        ;Bug: Show window before closing or the DupliBackupX exit functions don't work (Duplicati server stays open)
+        ;Bug: Show window before closing or the DupliBackupX exit functions do not work (Duplicati server stays open)
         WinShow, ahk_pid %procPID%
         WinClose, ahk_pid %procPID%
         WinWaitClose, ahk_pid %procPID%

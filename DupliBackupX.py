@@ -100,8 +100,13 @@ backupsources = [
 ########################
 ########################
 
-version_number = "1.0.1"
+version_number = "1.0.2"
 
+# Start the server with auto updates disabled. 
+# This is non-standard usage so usagereporter is disabled as well.
+envvars_full = dict(os.environ.copy())
+envvars_new = {"USAGEREPORTER_Duplicati_LEVEL": "none", "AUTOUPDATER_Duplicati_SKIP_UPDATE": "1"}
+envvars_full.update(envvars_new)
 backupconfig = {}
 theInterval = None
 serverproc = None
@@ -170,8 +175,8 @@ def showmenu():
 
     menuitems = [
         FunctionItem("Show Backup Info", showbackupinfo),
-        FunctionItem("Open DupliBackupX server in browser", openinbrowser),
-        FunctionItem("Open Source Folder (first path in backup config)", opensourcefolder),
+        FunctionItem("Open DupliBackupX Server in Browser", openinbrowser),
+        FunctionItem("Open Source Folder (First path in backup config)", opensourcefolder),
         FunctionItem("Open Destination Folder", opendestinationfolder),
         FunctionItem("List Backups", listbackups),
         FunctionItem("Compare Backups", comparebackups),
@@ -316,7 +321,7 @@ def comparebackups():
     comparever1 = input("Enter first version number to compare: ")
     comparever2 = input("Enter second version number to compare: ")
     callargs = [
-        duplicati_location + "duplicati.commandline", "compare", backupdestination, "--dbpath=" + backupdbpath, "--encryption-module=",
+        duplicati_location + "duplicati.commandline", "compare", backupdestination, "--dbpath=" + backupdbpath, "--full-result", "--encryption-module=",
         "--compression-module=zip", "--no-encryption=true", comparever1, comparever2
     ]
     subprocess.run(callargs)
@@ -422,7 +427,7 @@ def startserver(serverdatafolder):
     #Duplicati.Server --webservice-port=8304 --server-datafolder=D:\DUMMY\DupliBackupX
     print("Starting Duplicati Server...")
     callargs = [duplicati_location + "Duplicati.Server", "--webservice-port=" + serverport, "--server-datafolder=" + serverdatafolder]
-    proc = subprocess.Popen(callargs, creationflags=subprocess.IDLE_PRIORITY_CLASS)
+    proc = subprocess.Popen(callargs, creationflags=subprocess.IDLE_PRIORITY_CLASS, env=envvars_full)
     #Login using duplicati-client (once is enough, unless you are using it for another server as well)
     callargs = [duplicaticlient_location + "duplicati_client" + duplicaticlient_ext, "login", "http://localhost:" + serverport]
     if duplicaticlient_python != None:
