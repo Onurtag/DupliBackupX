@@ -29,7 +29,7 @@ https://github.com/Onurtag/DupliBackupX
   - **--duplicaticlient**: use commandline to set duplicati_client folder path instead of using the inline application config
   - **--version**: display application version
 
-When the value is a folder path, you might have to end it with double backslashes. Like: option2=\"path\\to\\folder\\\\\""
+When the value is a folder path, you might have to end it with double backslashes. Like: option2=\"path\\to\\folder\\\\\"
 
 Example full commandline:
 ```bash
@@ -40,11 +40,16 @@ ___
 ### **Extra: DupliBackupX Helper.ahk**
 
 A very basic Autohotkey script that does the following work:  
-- When opened, it starts DupliBackupX and sets the icon and the window title of its console window.
-- When the DupliBackupX window is minimized, it hides the window and when you click the tray icon it shows it.
-- When you close the ahk script from its tray window, it closes the hidden window.
+- When you run DupliBackupX Helper.ahk, it starts DupliBackupX with your configuration and sets the icon and the window title of its console window.
+- When the DupliBackupX console window is minimized, it hides the window and when you click the tray icon it shows it.
+- When you close the ahk script from the Exit option in the tray menu, it closes DupliBackupX as well.
 
 Don't forget to configure the script before running. Configuration lines are marked with ❗❗❗.
+
+___
+
+### **Changelog:**
+https://github.com/Onurtag/DupliBackupX/blob/master/CHANGELOG.md
 
 ___
 
@@ -56,5 +61,5 @@ ___
  - termcolor (https://pypi.org/project/termcolor/)  
  - consolemenu (consolemenu was modified to prevent it from clearing the screen: https://github.com/Onurtag/console-menu)  
    
- 🤖 Icon font:  
+ **𝐀𝐁** Icon font:  
  - Octicity (http://www.umop.com/)
