@@ -13,6 +13,7 @@ Menu, Tray, Add, Exit, Exited
 ;Menu, Tray, Standard
 Menu, Tray, Default, Show/Hide DupliBackupX
 OnExit("Exiting")
+version_number := "1.0.0"
 
 /*
 
@@ -30,7 +31,6 @@ If you want to run multiple instances of this helper script, copy it with a diff
 ;------ DupliBackupX Helper Configuration ------
 
 ;----- Required -----
-
 ; ❗❗❗ Json file path:
 jsonfilePath = %A_ScriptDir%\jsonimports\Import1_DupliBackupX.json
 
@@ -38,9 +38,10 @@ jsonfilePath = %A_ScriptDir%\jsonimports\Import1_DupliBackupX.json
 ; ❗❗❗ Set your commandline here:
 Run, powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile="%jsonfilePath%" --port=8201 --timer=60,,, procPID
 WinWait, ahk_pid %procPID%,, 20
-Sleep, 100
 winID := WinExist("ahk_pid" procPID)
 
+; ❗❗❗ Set window icons and title to DupliBackupX:
+setWindowProperties := 1
 
 ;----- Extra Features (disable if not needed) -----
 
@@ -50,7 +51,7 @@ winID := WinExist("ahk_pid" procPID)
 ; ❗❗❗ Enable Tracking of log changes:
 trackLogChanges := 1
 ;Check the log file for modifications every x milliseconds:
-trackLogTimer := 60 * 1000      ;60 x 1000 milliseconds = 60 seconds
+trackLogTimer := 60 * 1000 ;60 x 1000 milliseconds = 60 seconds
 
 ;-----------------------------------------------
 
@@ -68,23 +69,28 @@ h_Icon:=DllCall("LoadImage"
 
 -----
 */
-; ! Change the shell window's title/taskbar/alt+tab menu icons to DBU icon
-hIcon := DllCall( "LoadImage", UInt,0, Str,IcoFile, UInt,1, UInt,24, UInt,24, UInt,0x10 )
-SendMessage, 0x80, 0, hIcon ,, ahk_id %winID% ; One affects Title bar and
-SendMessage, 0x80, 1, hIcon ,, ahk_id %winID% ; the other the ALT+TAB menu
-; ! Change the window title to DupliBackupX
-WinSetTitle, ahk_pid %procPID%,, DupliBackupX
-
-;Get the log file location from the imported json
-FileRead, jsonfileData, %jsonfilePath%
-logFile := RegExReplace(jsonfileData, "sm).*?""Name"":\ ""--log-file"",\s*?""Value"":\ ""(.*?)"",.*" , Replacement := "$1", OutputVarCount := "", Limit := -1, StartingPosition := 1)
-if (logFile == "") {
-    trackLogChanges = 0
-} else {
-    logFile := StrReplace(logFile, "\\", "\")
-    FileGetTime, logfileModifiedTime, %logFile%, M
-    SetTimer, CheckIfLogModified, %trackLogTimer%
+if (setWindowProperties) {
+    ; ! Change the shell window's title/taskbar/alt+tab menu icons to DBU icon
+    Sleep, 200
+    hIcon := DllCall( "LoadImage", UInt,0, Str,IcoFile, UInt,1, UInt,24, UInt,24, UInt,0x10 )
+    SendMessage, 0x80, 0, hIcon ,, ahk_id %winID% ; One affects Title bar and
+    SendMessage, 0x80, 1, hIcon ,, ahk_id %winID% ; the other the ALT+TAB menu
+    ; ! Change the window title to DupliBackupX
+    WinSetTitle, ahk_pid %procPID%,, DupliBackupX
 }
+if (trackLogChanges) {
+    ;Get the log file location from the imported json
+    FileRead, jsonfileData, %jsonfilePath%
+    logFile := RegExReplace(jsonfileData, "sm).*?""Name"":\ ""--log-file"",\s*?""Value"":\ ""(.*?)"",.*" , Replacement := "$1", OutputVarCount := "", Limit := -1, StartingPosition := 1)
+    if (logFile == "") {
+        trackLogChanges = 0
+    } else {
+        logFile := StrReplace(logFile, "\\", "\")
+        FileGetTime, logfileModifiedTime, %logFile%, M
+        SetTimer, CheckIfLogModified, %trackLogTimer%
+    }
+}
+
 needtoCloseWindow := 1
 currentlyHidden := 0
 SetTimer, CheckIfMinimized, 150
@@ -96,13 +102,20 @@ Return
 
 CheckMinimized() {
     global
-    WinGet, winNotMin, MinMax, ahk_pid %procPID%
+    if (setWindowProperties) {
+        ;Check if the window title is still correct
+        WinGetTitle, winTitle, ahk_pid %procPID%
+        if (winTitle != "DupliBackupX") {
+            WinSetTitle, ahk_pid %procPID%,, DupliBackupX
+        }
+    }
     ;If window process is minimized, hide it. (-1 minimized, 0 visible)
+    WinGet, winNotMin, MinMax, ahk_pid %procPID%
     if (winNotMin == -1) {
         SetTimer, CheckIfMinimized, Off
         WinHide, ahk_pid %procPID%
         currentlyHidden = 1
-    ;exit if the window process doesn't exist
+        ;exit if the window process doesn't exist
     } else if (winNotMin == "") {
         needtoCloseWindow = 0
         ExitApp
@@ -115,7 +128,7 @@ ShowHideWindow:
         currentlyHidden = 0
         ;Restore minimized window 
         WinRestore, ahk_pid %procPID%
-        ;wait until the window is active probably useless
+        ;wait until the window is active (probably useless)
         ;WinWaitActive, ahk_pid %procPID%
         SetTimer, CheckIfMinimized, 150
     } else {
@@ -133,7 +146,7 @@ CheckIfLogModified:
     }
 Return
 
-Exited:    
+Exited: 
     ExitApp
 Return
 

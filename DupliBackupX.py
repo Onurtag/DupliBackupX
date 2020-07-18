@@ -43,7 +43,8 @@ ___
  - Octicity (http://www.umop.com/)
 """
 
-# TODO version number
+# TODO increase version number
+version_number = "1.0.3"
 
 ########################
 #######  Config  #######
@@ -99,8 +100,6 @@ backupsources = [
 ########################
 ########################
 ########################
-
-version_number = "1.0.3"
 
 # Start the server with auto updates disabled. 
 # This is non-standard usage so usagereporter is disabled as well.
