@@ -13,7 +13,7 @@ Menu, Tray, Add, Exit, Exited
 ;Menu, Tray, Standard
 Menu, Tray, Default, Show/Hide DupliBackupX
 OnExit("Exiting")
-version_number := "1.0.0"
+version_number := "1.0.1"
 
 /*
 
@@ -33,17 +33,20 @@ If you want to run multiple instances of this helper script, copy it with a diff
 ;------ DupliBackupX Helper Configuration ------
 
 ;----- Required -----
-; ❗❗❗ Json file path:
-jsonfilePath = %A_ScriptDir%\jsonimports\Import1_DupliBackupX.json
+; ❗❗❗ Json file path (%A_ScriptDir% is the folder that this script resides in): 
+jsonfilePath = "%A_ScriptDir%\jsonimports\Import1_DupliBackupX.json"
+; ❗❗❗ Duplicati server port number:  
+portNumber = 8201
+; ❗❗❗ Backup timer in seconds:  
+timerSeconds = 60
 
-;Run DupliBackupX and get the pid
-; ❗❗❗ Set your commandline here:
-Run, powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile="%jsonfilePath%" --port=8201 --timer=60,,, procPID
-WinWait, ahk_pid %procPID%,, 20
-winID := WinExist("ahk_pid" procPID)
+; ❗ duplicati path (Can be set to "" if its on your PATH):
+duplicatiPath = ""
+; ❗ duplicati_client path (source or executable) (Can be set to "" if its on your PATH):
+duplicaticlientPath = "C:\Users\Onurtag\Desktop\Projects\Git\duplicati-client\\"
 
-; ❗❗❗ Set window icons and title to DupliBackupX:
-setWindowProperties := 1
+; ❗❗ Set window icons and title to DupliBackupX:
+setWindowProperties := true
 
 ;----- Extra Features (disable if not needed) -----
 
@@ -51,11 +54,25 @@ setWindowProperties := 1
 ; Only works when you have the "--log-file" settings enabled within your imported json file. 
 ; Having --log-file-log-level as Warning or Error is also pretty much required.
 ; ❗❗❗ Enable Tracking of log changes:
-trackLogChanges := 1
+trackLogChanges := true
 ;Check the log file for modifications every x milliseconds:
 trackLogTimer := 60 * 1000 ;60 x 1000 milliseconds = 60 seconds
 
 ;-----------------------------------------------
+
+runArgs = powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile=%jsonfilePath% --port=%portNumber% --timer=%timerSeconds%
+if (duplicatiPath != """""") {
+    runArgs = %runArgs% --duplicati=%duplicatiPath%
+}
+if (duplicaticlientPath != """""") {
+    runArgs = %runArgs% --duplicaticlient=%duplicaticlientPath%
+}
+;MsgBox, %runArgs%
+
+;Run DupliBackupX and get the pid
+Run, %runArgs%,,, procPID
+WinWait, ahk_pid %procPID%,, 20
+winID := WinExist("ahk_pid" procPID)
 
 /*
 -----
