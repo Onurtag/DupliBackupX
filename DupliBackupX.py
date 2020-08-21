@@ -8,6 +8,11 @@ import colorama
 from consolemenu import *
 from consolemenu.format import *
 from consolemenu.items import *
+
+# TODO -increase version number
+#      -update changelog
+version_number = "1.0.4"
+
 """
 DupliBackupX
 Full readme at: 
@@ -42,9 +47,6 @@ ___
  🤖 Icon font:  
  - Octicity (http://www.umop.com/)
 """
-
-# TODO increase version number
-version_number = "1.0.3"
 
 ########################
 #######  Config  #######
@@ -220,7 +222,7 @@ def createconfig():
         print("Port: " + colored(serverport, 'green'))
     if args.timer != None:
         print("Timer: " + colored(backuptimer, 'green'))
-    print("Config: \n" + colored(json.dumps(backupconfig, indent=4), 'green'))
+    print("Config: \n" + colored(json.dumps(backupconfig, indent=4, ensure_ascii=False), 'green'))
     # Detect duplicati_client.py
     if path.exists(duplicaticlient_location + "duplicati_client.py"):
         global duplicaticlient_ext, duplicaticlient_python
@@ -351,13 +353,13 @@ def runbackup():
 # Returns 1 if the file was updated.
 def generatejson():
     filename = "DupliBackupX_BASE.json"
-    with open(filename, "r") as basefile:
+    with open(filename, "r", encoding="UTF-8") as basefile:
         basedata = json.load(basefile)
 
     currentdata = None
     try:
         filename = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
-        with open(filename, "r") as basefile:
+        with open(filename, "r", encoding="UTF-8") as basefile:
             currentdata = json.load(basefile)
     except:
         pass
@@ -372,32 +374,32 @@ def generatejson():
         return 0
 
     newfile = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
-    with open(newfile, "w") as nfile:
-        json.dump(basedata, nfile, indent=2)
+    with open(newfile, "w", encoding="UTF-8") as nfile:
+        json.dump(basedata, nfile, indent=2, ensure_ascii=False)
 
     return 1
 
 
 def copyimportedjson():
     filename = importjson
-    with open(filename, "r") as basefile:
+    with open(filename, "r", encoding="UTF-8") as basefile:
         importdata = json.load(basefile)
 
     newfile = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
-    with open(newfile, "w") as nfile:
-        json.dump(importdata, nfile, indent=2)
+    with open(newfile, "w", encoding="UTF-8") as nfile:
+        json.dump(importdata, nfile, indent=2, ensure_ascii=False)
 
 
 # Returns 1 if the imported json file was different
 def compareimportedjson():
     filename = importjson
-    with open(filename, "r") as basefile:
+    with open(filename, "r", encoding="UTF-8") as basefile:
         importdata = json.load(basefile)
 
     currentdata = None
     try:
         filename = backupdestination + "\\DupliBackupX\\" + backupname + ".json"
-        with open(filename, "r") as basefile:
+        with open(filename, "r", encoding="UTF-8") as basefile:
             currentdata = json.load(basefile)
     except:
         pass
@@ -411,7 +413,7 @@ def compareimportedjson():
 # Returns 1 if the file was updated.
 def importjsonvalues():
     filename = importjson
-    with open(filename, "r") as basefile:
+    with open(filename, "r", encoding="UTF-8") as basefile:
         basedata = json.load(basefile)
 
     global backupname, backupdestination, backupsources

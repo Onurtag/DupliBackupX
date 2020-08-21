@@ -18,13 +18,15 @@ version_number := "1.0.0"
 /*
 
 DupliBackupX Helper.ahk
-A very basic Autohotkey script that does the following work:
 
-    When opened, it starts DupliBackupX and sets the icon and the window title of its console window.
-    When the DupliBackupX window is minimized, it hides the window and when you click the tray icon it shows it.
-    When you close the ahk script from its tray window, it closes the hidden window.
+A very basic Autohotkey script that does the following work:  
 
-Configuration lines are marked with ❗❗❗. Don't forget to configure the script before running.
+- When you run DupliBackupX Helper.ahk, it starts DupliBackupX with your configuration and sets the icon and the window title of its console window.
+- When the DupliBackupX console window is minimized, it hides the window and when you click the tray icon it shows it.
+- When you close the ahk script from the Exit option in the tray menu, it closes DupliBackupX as well.
+
+Don't forget to configure the script before running. Configuration lines are marked with ❗❗❗.
+
 If you want to run multiple instances of this helper script, copy it with a different name and edit the config values.
 */
 
