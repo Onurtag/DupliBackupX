@@ -107,6 +107,7 @@ if (trackLogChanges) {
     } else {
         logFile := StrReplace(logFile, "\\", "\")
         FileGetTime, logfileModifiedTime, %logFile%, M
+        FileGetSize, logfileSize, %logFile%
         SetTimer, CheckIfLogModified, %trackLogTimer%
     }
 }
@@ -160,8 +161,10 @@ Return
 
 CheckIfLogModified:
     FileGetTime, logfileModifiedTime_new, %logFile%, M
-    if (logfileModifiedTime_new != logfileModifiedTime) {
+    FileGetSize, logfileSize_new, %logFile%
+    if ((logfileModifiedTime_new != logfileModifiedTime) && (logfileSize_new != logfileSize)) {
         logfileModifiedTime := logfileModifiedTime_new
+        logfileSize := logfileSize_new
         TrayTip, DupliBackupX Helper, DupliBackupX log file was modified.`nAn error or a warning might have occurred., 5, 0x10
     }
 Return
