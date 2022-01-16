@@ -1,17 +1,16 @@
-import subprocess, sys, time, threading, json, webbrowser
+import subprocess, sys, time, threading, json, webbrowser, os
 import atexit
 import argparse
-from os import path
 from datetime import datetime
-from termcolor import *
+from termcolor import colored
 import colorama
-from consolemenu import *
-from consolemenu.format import *
-from consolemenu.items import *
+from consolemenu import ConsoleMenu, MenuFormatBuilder
+from consolemenu.format import MenuBorderStyleType
+from consolemenu.items import FunctionItem
 
 # TODO -increase version number
 #      -update changelog
-version_number = "1.0.4"
+version_number = "1.0.5"
 
 """
 DupliBackupX
@@ -42,7 +41,8 @@ ___
   
  📚 Used pip libraries:  
  - termcolor (https://pypi.org/project/termcolor/)  
- - consolemenu (consolemenu was modified to prevent it from clearing the screen: https://github.com/Onurtag/console-menu)  
+ - console-menu (https://pypi.org/project/console-menu/)  
+ - colorama (https://pypi.org/project/colorama/)  
    
  🤖 Icon font:  
  - Octicity (http://www.umop.com/)
@@ -167,8 +167,8 @@ def main():
 
 def showmenu():
     menu = ConsoleMenu(
-        colored("　　　　　" + "DupliBackupX v" + version_number + "　　　　", 'green'),
-        colored("　　　　　" + "Backup Name: " + backupname + "　　　　", 'cyan'),
+        colored("DupliBackupX v" + version_number, 'green'),
+        colored("Backup Name: " + backupname, 'cyan'),
         #add double space "　" paddings around colored strings to fix the menu borders. 5 left, 4 right (for windows only?)
         prologue_text="Select an option by entering its number",
         clear_screen=False,
@@ -224,7 +224,7 @@ def createconfig():
         print("Timer: " + colored(backuptimer, 'green'))
     print("Config: \n" + colored(json.dumps(backupconfig, indent=4, ensure_ascii=False), 'green'))
     # Detect duplicati_client.py
-    if path.exists(duplicaticlient_location + "duplicati_client.py"):
+    if os.path.exists(duplicaticlient_location + "duplicati_client.py"):
         global duplicaticlient_ext, duplicaticlient_python
         duplicaticlient_ext = ".py"
         duplicaticlient_python = "python"
