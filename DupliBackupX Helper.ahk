@@ -1,4 +1,4 @@
-﻿#NoEnv
+#NoEnv
 SendMode Input
 #SingleInstance, force
 #Persistent
@@ -13,10 +13,9 @@ Menu, Tray, Add, Exit, Exited
 ;Menu, Tray, Standard
 Menu, Tray, Default, Show/Hide DupliBackupX
 OnExit("Exiting")
-version_number := "1.0.1"
+version_number := "1.0.2"
 
 /*
-
 DupliBackupX Helper.ahk
 
 A very basic Autohotkey script that does the following work:  
@@ -52,13 +51,36 @@ setWindowProperties := true
 
 ; ❗ Track log file for warnings/errors
 ; Only works when you have the "--log-file" settings enabled within your imported json file. 
-; Having --log-file-log-level as Warning or Error is also pretty much required.
+; ❗ Having --log-file-log-level set to Warning or Error is also pretty much required unless you want to be spammed with notifications.
 ; ❗❗❗ Enable Tracking of log changes:
 trackLogChanges := true
 ;Check the log file for modifications every x milliseconds:
 trackLogTimer := 60 * 1000 ;60 x 1000 milliseconds = 60 seconds
-
+;
+; ❗ Ask to edit the json file when opening
+; When true, DupliBackupX Helper will ask if you want to edit the json file before starting.
+asktoEdit := true
+;
 ;-----------------------------------------------
+
+if (asktoEdit) {
+    MsgBox, 4132, DupliBackupX Helper, Would you like to edit the imported json file before starting?
+    IfMsgBox, Yes 
+    {
+        ;run the json file with the default editor
+        Run, %jsonfilePath%
+        MsgBox, 4161, DupliBackupX Helper, Press OK when you finish editing the json file. `nPress Cancel to quit.
+        IfMsgBox, OK 
+        {
+            ;continue running
+        } else {
+            ExitApp
+        }
+    } else {
+        ;continue running
+    }
+}
+
 
 runArgs = powershell python "%A_ScriptDir%\DupliBackupX.py" --jsonfile=%jsonfilePath% --port=%portNumber% --timer=%timerSeconds%
 if (duplicatiPath != """""") {
@@ -176,7 +198,7 @@ Return
 Exiting(ExitReason, ExitCode) {
     Global
     if (needtoCloseWindow) {
-        ;Bug: Show window before closing or the DupliBackupX exit functions do not work (Duplicati server stays open)
+        ;Bug workaround: Show the window before closing or DupliBackupX exit functions do not work (Duplicati server stays open)
         WinShow, ahk_pid %procPID%
         WinClose, ahk_pid %procPID%
         WinWaitClose, ahk_pid %procPID%
