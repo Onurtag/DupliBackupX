@@ -59,7 +59,8 @@ ___
   
  📚 Used pip libraries:  
  - termcolor (https://pypi.org/project/termcolor/)  
- - consolemenu (consolemenu was modified to prevent it from clearing the screen: https://github.com/Onurtag/console-menu)  
+ - console-menu (https://pypi.org/project/console-menu/)  
+ - colorama (https://pypi.org/project/colorama/)  
    
- **𝐀𝐁** Icon font:  
+ 🤖 Icon font:  
  - Octicity (http://www.umop.com/)
