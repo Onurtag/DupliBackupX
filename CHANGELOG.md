@@ -1,5 +1,15 @@
 # Changelog for DupliBackupX and DupliBackupX Helper.ahk
 
+## **2022-01-16**
+
+### DupliBackupX v1.0.5:
+- Fix a problem with menu display.  
+- Cleanup imports.  
+- Remove readme.md content from the code
+
+### DupliBackupX Helper.ahk v1.0.2:
+- Ask to edit the imported json file when opening  
+
 ## **2020-08-21**
 
 ### DupliBackupX v1.0.4:

@@ -16,6 +16,12 @@ https://github.com/Onurtag/DupliBackupX
 
 ### **How to use DupliBackupX**
 
+ 1. Install Python.  
+ 2. Install DupliBackupX requirements by entering the following command into your terminal:  
+    ```
+    pip install termcolor, console-menu, colorama
+    ```
+
  For application and backup configuration, you can modify the inline configs or set them using commandline.  
  When using the inline Backup Config (i.e. when you are not using the --jsonfile commandline), the base file will be DupliBackupX_BASE.json. The Backup Config values will be added onto that.  
 
@@ -57,7 +63,7 @@ ___
  - duplicati 2 (https://github.com/duplicati/duplicati)  
  - duplicati-client (https://github.com/Pectojin/duplicati-client)  
   
- 📚 Used pip libraries:  
+ 📚 Used python libraries:  
  - termcolor (https://pypi.org/project/termcolor/)  
  - console-menu (https://pypi.org/project/console-menu/)  
  - colorama (https://pypi.org/project/colorama/)  
