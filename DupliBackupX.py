@@ -16,36 +16,6 @@ version_number = "1.0.5"
 DupliBackupX
 Full readme at: 
 https://github.com/Onurtag/DupliBackupX
-___
-
- ⭐ Commandline arguments:  
-    
-  - **--help**: display help
-  - **--jsonfile**: import a json file instead of using the inline backup config
-  - **--port**: use a different server port instead of the default
-  - **--timer**: use a custom timer in seconds instead of the default
-  - **--duplicati**: use commandline to set duplicati folder path instead of using the inline application config
-  - **--duplicaticlient**: use commandline to set duplicati_client folder path instead of using the inline application config
-  - **--version**: display application version
-
-When the value is a folder path, you might have to end it with double backslashes. Like: option2=\"path\\to\\folder\\\\\""
-
-Example full commandline:
-python DupliBackupX --jsonfile="D:\MyBackup.json" --timer=120 --port=8408 --duplicati="C:\Program Files\Duplicati 2\\" --duplicaticlient="C:\Applications\duplicati_client\\"
-
-___
-
- 👟 Used applications:  
- - duplicati 2 (https://github.com/duplicati/duplicati)  
- - duplicati-client (https://github.com/Pectojin/duplicati-client)  
-  
- 📚 Used pip libraries:  
- - termcolor (https://pypi.org/project/termcolor/)  
- - console-menu (https://pypi.org/project/console-menu/)  
- - colorama (https://pypi.org/project/colorama/)  
-   
- 🤖 Icon font:  
- - Octicity (http://www.umop.com/)
 """
 
 ########################
