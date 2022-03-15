@@ -13,7 +13,7 @@ Menu, Tray, Add, Exit, Exited
 ;Menu, Tray, Standard
 Menu, Tray, Default, Show/Hide DupliBackupX
 OnExit("Exiting")
-version_number := "1.0.2"
+version_number := "1.0.3"
 
 /*
 DupliBackupX Helper.ahk
@@ -130,6 +130,10 @@ if (trackLogChanges) {
         logFile := StrReplace(logFile, "\\", "\")
         FileGetTime, logfileModifiedTime, %logFile%, M
         FileGetSize, logfileSize, %logFile%
+        ;set size to 0 if the log file doesn't exist yet (size == "")
+        if (logfileSize == "") {
+            logfileSize == 0
+        }
         SetTimer, CheckIfLogModified, %trackLogTimer%
     }
 }
@@ -184,10 +188,16 @@ Return
 CheckIfLogModified:
     FileGetTime, logfileModifiedTime_new, %logFile%, M
     FileGetSize, logfileSize_new, %logFile%
-    if ((logfileModifiedTime_new != logfileModifiedTime) && (logfileSize_new != logfileSize)) {
+    if (logfileSize_new == "") {
+        logfileSize_new == 0
+    }
+    if (logfileModifiedTime_new != logfileModifiedTime) {
         logfileModifiedTime := logfileModifiedTime_new
         logfileSize := logfileSize_new
-        TrayTip, DupliBackupX Helper, DupliBackupX log file was modified.`nAn error or a warning might have occurred., 5, 0x10
+        ;only notify of the change if the file size is bigger (log file always appends)
+        if (logfileSize_new > logfileSize) {
+            TrayTip, DupliBackupX Helper, DupliBackupX log file was modified.`nAn error or a warning might have occurred!, 5, 0x10
+        }
     }
 Return
 

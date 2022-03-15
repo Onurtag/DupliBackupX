@@ -1,5 +1,10 @@
 # Changelog for DupliBackupX and DupliBackupX Helper.ahk
 
+## **2022-03-15**
+
+### DupliBackupX Helper.ahk v1.0.3:
+- Fix a bug with the log tracker.  
+
 ## **2022-01-16**
 
 ### DupliBackupX v1.0.5:
