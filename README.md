@@ -1,3 +1,8 @@
+*Repo is now archived.  
+Please use other tools that have better performance (i.e restic.)*  
+
+---  
+
 # DupliBackupX
 ### One way to quickly create backups using Duplicati. Everything stays in a single folder.    
 https://github.com/Onurtag/DupliBackupX
